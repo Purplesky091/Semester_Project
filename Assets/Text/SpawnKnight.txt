@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 This is text
 This is more Text
 Test test
