@@ -1,0 +1,5 @@
+- ask the player to place 4 knights down
+	- knights only allowed in top row
+- ask the player to place the peasants
+	- peasants allowed to be in the the bottom 4 rows.
+	- nice addition: allow player to delete piece whenever they put one down and ask them to commit it.
