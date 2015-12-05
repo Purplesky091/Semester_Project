@@ -34,4 +34,9 @@ public class Tile : MonoBehaviour {
     {
         Debug.Log("I'm position (" + gridPosition.x + "," + gridPosition.y + ")");
     }
+
+    void OnMouseDown()
+    {
+        //GameManager.instance.SpawnPlayer()
+    }
 }

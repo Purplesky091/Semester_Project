@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
-
+    public static GameManager instance;
     public Board board;
     public GameObject KnightPrefab;
     
@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
     // create the board.
     void Start()
     {
+        instance = this;
         float row = 7;
         for (int col = 0; col < board.boardSize; col++)
         {
