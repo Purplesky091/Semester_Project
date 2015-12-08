@@ -19,7 +19,7 @@ public class Tile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        	
 	}
 
     /// <summary>
@@ -35,8 +35,21 @@ public class Tile : MonoBehaviour {
         Debug.Log("I'm position (" + gridPosition.x + "," + gridPosition.y + ")");
     }
 
+    void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+            OnRightMouseDown();
+    }
+
     void OnMouseDown()
     {
-        //GameManager.instance.SpawnPlayer()
+        if (!AlertScript.isActive())
+            GameManager.instance.SpawnPlayer(this.gridPosition.x, this.gridPosition.y);
+    }
+
+    void OnRightMouseDown()
+    {
+        if (!AlertScript.isActive())
+            GameManager.instance.DeletePlayer(this.gridPosition.x, this.gridPosition.y);
     }
 }
