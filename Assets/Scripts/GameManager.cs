@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour {
             Destroy(piece);
             --KnightCount;
         }
-        else if (piecePhase == PieceEnum.PEASANT)
+        else if (piece.name == "Peasant(Clone)" && piecePhase == PieceEnum.PEASANT)
         {
             Destroy(piece);
             --PeasantCount;
