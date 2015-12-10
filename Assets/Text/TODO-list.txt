@@ -1,0 +1,5 @@
+Draw pieces at specified locations. 
+Get clicks on a board at given locations and pass them through to the right spot. 
+Highlight tiles. 
+Remove the highlight on tiles.
+Remove pieces from the board
