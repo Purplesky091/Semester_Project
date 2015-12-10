@@ -5,6 +5,13 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance;
     private int KnightCount;
     private int PeasantCount;
+    private enum PieceEnum
+    {
+        KNIGHT,
+        PEASANT
+    }
+    private PieceEnum piecePhase;
+    private bool? alertAnswer;
     public Board board;
     public GameObject KnightPrefab;
     public GameObject PeasantPrefab;
@@ -15,13 +22,26 @@ public class GameManager : MonoBehaviour {
         instance = this;
         KnightCount = 0;
         PeasantCount = 0;
+        alertAnswer = null;
+        piecePhase = PieceEnum.KNIGHT;
     }
 
     // Update is called once per frame
     void Update ()
     {
-	    
-	}
+        if (alertAnswer == true && piecePhase == PieceEnum.KNIGHT)
+        {
+            piecePhase = PieceEnum.PEASANT;
+            AlertScript.instance.ActivateAlertBox(false, "Peasant player, please arrange your sixteen pieces in the bottom four rows.");
+        }
+        else if (alertAnswer == true && piecePhase == PieceEnum.PEASANT)
+        {
+            piecePhase = PieceEnum.KNIGHT;
+            AlertScript.instance.ActivateAlertBox(false, "The game may now begin!");
+        }
+
+        alertAnswer = null;
+    }
 
     /// <summary>
     /// Spawns a piece at the specified tile.
@@ -31,44 +51,51 @@ public class GameManager : MonoBehaviour {
     /// <param name="piecePrefab">This is the prefab you wish to spawn on a tile. Could be a knight or a peasant.</param>
     public void SpawnPlayer(float tileX, float tileY)
     {
-        GameObject piecePrefab;
-        if (KnightCount < 4 && tileY == 7 && getPieceAt(tileX, tileY) == null)
+        if (KnightCount < 4 && tileY == 7 && getPieceAt(tileX, tileY) == null && piecePhase == PieceEnum.KNIGHT)
         {
-            piecePrefab = KnightPrefab;
+            SetPiece(tileX, tileY, KnightPrefab);
             ++KnightCount;
-            Instantiate(piecePrefab, new Vector2(tileX + board.boardHolder.position.x, tileY + board.boardHolder.position.y), Quaternion.identity);
+            if (KnightCount == 4)
+                AlertScript.instance.ActivateAlertBox(true, "Confirm?");
         }
-        else if (PeasantCount < 16 && tileY < 4)
+        else if (PeasantCount < 16 && tileY < 4 && getPieceAt(tileX, tileY) == null && piecePhase == PieceEnum.PEASANT)
         {
-            piecePrefab = PeasantPrefab;
+            SetPiece(tileX, tileY, PeasantPrefab);
             ++PeasantCount;
-            Instantiate(piecePrefab, new Vector2(tileX + board.boardHolder.position.x, tileY + board.boardHolder.position.y), Quaternion.identity);
+            if (PeasantCount == 16)
+                AlertScript.instance.ActivateAlertBox(true, "Confirm?");
         }
     }
-
-    public void DeletePlayer(float tileX, float tileY)
+    private void SetPiece(float tileX, float tileY, GameObject piecePrefab)
     {
-        GameObject piece = getPieceAt(tileX, tileY);
-        if (piece != null)
+        Instantiate(piecePrefab, new Vector2(tileX + board.boardHolder.position.x, tileY + board.boardHolder.position.y), Quaternion.identity);
+    }
+
+    public void DeletePlayer(float tileX, float tileY, GameObject piece)
+    {
+        if (piece.name == "Knight(Clone)" && piecePhase == PieceEnum.KNIGHT)
         {
-            if (piece.name == "Knight(Clone)")
-            {
-                Destroy(piece);
-                --KnightCount;
-            }
-            else
-            {
-                Destroy(piece);
-                --PeasantCount;
-            }
+            Destroy(piece);
+            --KnightCount;
+        }
+        else if (piecePhase == PieceEnum.PEASANT)
+        {
+            Destroy(piece);
+            --PeasantCount;
         }
     }
 
-    private GameObject getPieceAt (float x, float y)
+    public void recieveAlertAnswer(bool answer)
+    {
+        alertAnswer = answer;
+    }
+
+    private GameObject getPieceAt(float x, float y)
     {
         foreach(GameObject piece in GameObject.FindObjectsOfType(typeof(GameObject)))
         {
-            if ((piece.name == "Knight(Clone)" || piece.name == "Peasant(Clone)") && piece.transform.position.x == (x - 3.5) && piece.transform.position.y == (y - 3.5))
+            if ((piece.name == "Knight(Clone)" || piece.name == "Peasant(Clone)") && piece.transform.position.x == (x + board.boardHolder.position.x) 
+             && piece.transform.position.y == (y + board.boardHolder.position.y))
                 return piece;
         }
 

@@ -34,22 +34,10 @@ public class Tile : MonoBehaviour {
     {
         Debug.Log("I'm position (" + gridPosition.x + "," + gridPosition.y + ")");
     }
-
-    void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(1))
-            OnRightMouseDown();
-    }
-
+ 
     void OnMouseDown()
     {
-        if (!AlertScript.isActive())
+        if (!AlertScript.instance.isActive())
             GameManager.instance.SpawnPlayer(this.gridPosition.x, this.gridPosition.y);
-    }
-
-    void OnRightMouseDown()
-    {
-        if (!AlertScript.isActive())
-            GameManager.instance.DeletePlayer(this.gridPosition.x, this.gridPosition.y);
     }
 }
