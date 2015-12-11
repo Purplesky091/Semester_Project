@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using Assets.Scripts;
 using System.Collections;
 
 public class KnightRender : MonoBehaviour
 {
-    public Vector2 gridPosition = Vector2.zero;
+    public Vector2Int gridPosition = Vector2Int.Zero;
     private Transform knightTransform;
 
     void Start()
@@ -11,7 +12,7 @@ public class KnightRender : MonoBehaviour
         knightTransform = transform; //saves the GetComponent<>() call.
     }
 
-    public void Move(float x, float y)
+    public void Move(int x, int y)
     {
         knightTransform.position = Board.GridToScreenPoints(x, y);
     }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assets.Scripts
 {
-    public enum PieceEnum
+    public enum GameState
     {
         KNIGHT_INIT,
         PEASANT_INIT,

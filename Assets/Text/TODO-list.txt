@@ -8,4 +8,3 @@ Remove pieces from the board
 REMAINING
 - interface with backend
 - Draw pieces at specified locations. (Knight and peasant phase)
-- change pieceEnum to Turn

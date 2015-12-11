@@ -4,7 +4,7 @@ using Assets.Scripts;
 
 public class GameManager : MonoBehaviour {
    // public static GameManager instance;
-    public PieceEnum piecePhase;
+    public GameState piecePhase;
     private static bool alertAnswer;
     public Board board;
     private MouseController mouseController;
@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour {
        // instance = this;
         alertAnswer = false;
         mouseController = GetComponent<MouseController>();
-        piecePhase = PieceEnum.KNIGHT_INIT;
+        piecePhase = GameState.KNIGHT_INIT;
     }
 
     // Update is called once per frame
@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
     {
         switch (piecePhase)
         {
-            case PieceEnum.KNIGHT_INIT:
+            case GameState.KNIGHT_INIT:
                 if (mouseController.pollForLeftClick()
                     && mouseController.lastCollidedObject.tag == "Tile")
                 {
@@ -42,12 +42,12 @@ public class GameManager : MonoBehaviour {
                 if (checkAlertAnswer())
                 {
                     AlertScript.instance.ActivateAlertBox(false, "Peasant player, please arrange your sixteen pieces in the bottom four rows.");
-                    piecePhase = PieceEnum.PEASANT_INIT;
+                    piecePhase = GameState.PEASANT_INIT;
                 }
                 break;
 
             //TODO - implement peasant initialization phase
-            case PieceEnum.PEASANT_INIT:
+            case GameState.PEASANT_INIT:
                 if (mouseController.pollForLeftClick()
                     && mouseController.lastCollidedObject.tag == "Tile")
                 {
@@ -66,11 +66,11 @@ public class GameManager : MonoBehaviour {
                 if (checkAlertAnswer())
                 {
                     AlertScript.instance.ActivateAlertBox(false, "Let the games begin!");
-                    piecePhase = PieceEnum.KNIGHT;
+                    piecePhase = GameState.KNIGHT;
                 }
                 break;
 
-            case PieceEnum.KNIGHT:
+            case GameState.KNIGHT:
                 Debug.Log("I'm on the knight phase!");
                 break;
 
@@ -91,12 +91,12 @@ public class GameManager : MonoBehaviour {
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="piecePrefab">This is the prefab you wish to spawn on a tile. Could be a knight or a peasant.</param>
-    public void SpawnPlayer(float tileX, float tileY)
+    public void SpawnPlayer(int tileX, int tileY)
     {
         board.SetPiece(tileX, tileY, piecePhase);
     }
 
-    public void DeletePlayer(float tileX, float tileY, GameObject piece)
+    public void DeletePlayer(int tileX, int tileY, GameObject piece)
     {
         board.DeletePiece(tileX, tileY, piece, piecePhase);
     }

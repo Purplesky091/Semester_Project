@@ -8,8 +8,10 @@ public class Tile : MonoBehaviour {
     private bool hasKnight;
     private bool hasPeasant;
     private bool isDarkTile = false;
-    public Vector2 gridPosition = Vector2.zero;
+    public Vector2Int gridPosition = Vector2Int.Zero;
+    //public Vector2 gridPosition = Vector2.zero;
     private BoxCollider2D boxCollider;
+    public int Id;
 
     void Awake()
     {
@@ -21,11 +23,17 @@ public class Tile : MonoBehaviour {
 	void Start () {
         
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        	
-	}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="gridPos"></param>
+    /// <param name="id"></param>
+    public void Initialize(Vector2Int gridPos, int id)
+    {
+        gridPosition = gridPos;
+        Id = id;
+    }
 
     /// <summary>
     /// Makes the tile the dark wood color.

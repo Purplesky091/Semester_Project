@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using Assets.Scripts;
 using System.Collections;
 
 public class PeasantRender : MonoBehaviour
 {
-    public Vector2 gridPosition = Vector2.zero;
+    public Vector2Int gridPosition = Vector2Int.Zero;
     private Transform peasantTransform;
 
     void Start()
@@ -11,7 +12,7 @@ public class PeasantRender : MonoBehaviour
         peasantTransform = transform;
     }
 
-    public void Move(float x, float y)
+    public void Move(int x, int y)
     {
         peasantTransform.position = Board.GridToScreenPoints(x, y);
     }
