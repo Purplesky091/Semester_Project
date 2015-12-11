@@ -16,9 +16,4 @@ public class PeasantRender : MonoBehaviour
         if (!AlertScript.instance.isActive())
             GameManager.instance.DeletePlayer(this.gridPosition.x, this.gridPosition.y, this.gameObject);
     }
-
-    void OnMouseDown()
-    {
-        Debug.Log("cool");
-    }
 }

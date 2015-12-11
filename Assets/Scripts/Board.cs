@@ -17,7 +17,8 @@ public class Board : MonoBehaviour {
     Tile[,] map; //ON THE map, the x = column, y = row. Top row = row 7. 
 
 	// create the board.
-	void Start () {
+	void Start ()
+    {
         map = new Tile[boardSize, boardSize];
         KnightList = new List<GameObject>();
         PeasantList = new List<GameObject>();
@@ -73,12 +74,6 @@ public class Board : MonoBehaviour {
         }
     }
 
-    /*
-    private void generatePlayers()
-    {
-        GameObject instance = Instantiate(KnightPrefab, new Vector2(0 - Mathf.Floor(boardSize / 2) + boardHolder.position.x, 0 - Mathf.Floor(boardSize / 2) + boardHolder.position.y), Quaternion.identity) as GameObject;
-    }
-    */
     public void SetPiece(float tileX, float tileY, PieceEnum piece)
     {
         if (piece == PieceEnum.KNIGHT && KnightCount < 4 && tileY == 7 && map[(int)tileX, (int)tileY].hasPiece() == false)
@@ -90,8 +85,9 @@ public class Board : MonoBehaviour {
             KnightList.Add(newKnight);
             newKnight.GetComponent<KnightRender>().gridPosition = new Vector2(tileX, tileY);
             map[(int)tileX, (int)tileY].setKnight(true);
+            map[(int)tileX, (int)tileY].ColliderSwitch(false);
         }
-        else if (PeasantCount < 16 && tileY < 4 && map[(int) tileX, (int) tileY].hasPiece() == false)
+        else if (piece == PieceEnum.PEASANT && PeasantCount < 16 && tileY < 4 && map[(int) tileX, (int) tileY].hasPiece() == false)
         {
             ++PeasantCount;
             if (PeasantCount == 16)
@@ -100,39 +96,27 @@ public class Board : MonoBehaviour {
             PeasantList.Add(newPeasant);
             newPeasant.GetComponent<PeasantRender>().gridPosition = new Vector2(tileX, tileY);
             map[(int)tileX, (int)tileY].setPeasant(true);
+            map[(int)tileX, (int)tileY].ColliderSwitch(false);
         }
     }
 
-    public void DeletePiece(float tileX, float tileY, GameObject piece)
+    public void DeletePiece(float tileX, float tileY, GameObject piece, PieceEnum piecePhase)
     {
-        if (piece.tag == "Knight")
+        if (piece.tag == "Knight" && piecePhase == PieceEnum.KNIGHT)
         {
             Destroy(piece);
             --KnightCount;
             map[(int)tileX, (int)tileY].setKnight(false);
+            map[(int)tileX, (int)tileY].ColliderSwitch(true);
         }
-        else if (piece.tag == "Peasant")
+        else if (piece.tag == "Peasant" && piecePhase == PieceEnum.PEASANT)
         {
             Destroy(piece);
             --PeasantCount;
             map[(int)tileX, (int)tileY].setPeasant(false);
+            map[(int)tileX, (int)tileY].ColliderSwitch(true);
         }
     }
-
-    /*private GameObject getPieceAt(float x, float y)
-    {
-        if (PieceList.Count > 0)
-        {
-            foreach (GameObject piece in PieceList)
-            {
-                if ((piece.tag == "Knight" || piece.tag == "Peasant") && piece.transform.position.x == (x + boardHolder.position.x)
-                 && piece.transform.position.y == (y + boardHolder.position.y))
-                    return piece;
-            }
-        }
-
-        return null;
-    }*/
 
     // Update is called once per frame
     void Update () {

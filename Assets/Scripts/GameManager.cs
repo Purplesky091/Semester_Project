@@ -46,10 +46,7 @@ public class GameManager : MonoBehaviour {
 
     public void DeletePlayer(float tileX, float tileY, GameObject piece)
     {
-        if (piecePhase == PieceEnum.KNIGHT)
-            board.DeletePiece(tileX, tileY, piece);
-        else if (piecePhase == PieceEnum.PEASANT)
-            board.DeletePiece(tileX, tileY, piece);
+        board.DeletePiece(tileX, tileY, piece, piecePhase);
     }
 
     public void recieveAlertAnswer(bool answer)

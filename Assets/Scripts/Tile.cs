@@ -8,9 +8,11 @@ public class Tile : MonoBehaviour {
     private bool hasKnight;
     private bool hasPeasant;
     public Vector2 gridPosition = Vector2.zero;
+    private BoxCollider2D boxCollider;
 
     void Awake()
     {
+        boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -59,5 +61,10 @@ public class Tile : MonoBehaviour {
     {
         if (!AlertScript.instance.isActive())
             GameManager.instance.SpawnPlayer(this.gridPosition.x, this.gridPosition.y);
+    }
+
+    public void ColliderSwitch(bool colliderOn)
+    {
+        boxCollider.enabled = colliderOn;
     }
 }
