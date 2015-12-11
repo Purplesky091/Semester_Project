@@ -76,7 +76,7 @@ public class Board : MonoBehaviour {
 
     public void SetPiece(float tileX, float tileY, PieceEnum piece)
     {
-        if (piece == PieceEnum.KNIGHT && KnightCount < 4 && tileY == 7 && map[(int)tileX, (int)tileY].hasPiece() == false)
+        if (piece == PieceEnum.KNIGHT_INIT && KnightCount < 4 && tileY == 7 && map[(int)tileX, (int)tileY].hasPiece() == false)
         {
             ++KnightCount;
             if (KnightCount == 4)
@@ -87,7 +87,7 @@ public class Board : MonoBehaviour {
             map[(int)tileX, (int)tileY].setKnight(true);
             map[(int)tileX, (int)tileY].ColliderSwitch(false);
         }
-        else if (piece == PieceEnum.PEASANT && PeasantCount < 16 && tileY < 4 && map[(int) tileX, (int) tileY].hasPiece() == false)
+        else if (piece == PieceEnum.PEASANT_INIT && PeasantCount < 16 && tileY < 4 && map[(int) tileX, (int) tileY].hasPiece() == false)
         {
             ++PeasantCount;
             if (PeasantCount == 16)
@@ -102,14 +102,14 @@ public class Board : MonoBehaviour {
 
     public void DeletePiece(float tileX, float tileY, GameObject piece, PieceEnum piecePhase)
     {
-        if (piece.tag == "Knight" && piecePhase == PieceEnum.KNIGHT)
+        if (piece.tag == "Knight" && piecePhase == PieceEnum.KNIGHT_INIT)
         {
             Destroy(piece);
             --KnightCount;
             map[(int)tileX, (int)tileY].setKnight(false);
             map[(int)tileX, (int)tileY].ColliderSwitch(true);
         }
-        else if (piece.tag == "Peasant" && piecePhase == PieceEnum.PEASANT)
+        else if (piece.tag == "Peasant" && piecePhase == PieceEnum.PEASANT_INIT)
         {
             Destroy(piece);
             --PeasantCount;

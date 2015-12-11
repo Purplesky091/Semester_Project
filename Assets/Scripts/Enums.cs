@@ -7,6 +7,8 @@ namespace Assets.Scripts
 {
     public enum PieceEnum
     {
+        KNIGHT_INIT,
+        PEASANT_INIT,
         KNIGHT,
         PEASANT
     }
