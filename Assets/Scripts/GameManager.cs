@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Assets.Scripts;
 
 public class GameManager : MonoBehaviour {
@@ -41,6 +40,7 @@ public class GameManager : MonoBehaviour {
                 //transition to the next state.
                 if (checkAlertAnswer())
                 {
+                    board.InitKnightList();
                     AlertScript.instance.ActivateAlertBox(false, "Peasant player, please arrange your sixteen pieces in the bottom four rows.");
                     piecePhase = GameState.PEASANT_INIT;
                 }
@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour {
                 //transition to the next state.
                 if (checkAlertAnswer())
                 {
+                    board.InitPeasantList();
                     AlertScript.instance.ActivateAlertBox(false, "Let the games begin!");
                     piecePhase = GameState.KNIGHT;
                 }

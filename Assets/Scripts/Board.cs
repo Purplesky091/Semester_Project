@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts;
 
@@ -87,14 +86,13 @@ public class Board : MonoBehaviour {
 
             // creates a new knight on the board and returns the knight just created.
             GameObject newKnight = Instantiate(KnightPrefab, new Vector2(tileX + boardHolder.position.x, tileY + boardHolder.position.y), Quaternion.identity) as GameObject;
-            //KnightList.Add(newKnight);
             newKnight.GetComponent<KnightRender>().gridPosition = new Vector2Int(tileX, tileY);
             newKnight.transform.SetParent(knightHolder); //makes the knights a child of the empty knight game object.
 
             map[tileX, tileY].setKnight(true);
             map[tileX, tileY].ColliderSwitch(false);
         }
-        else if (piece == GameState.PEASANT_INIT && PeasantCount < 16 && tileY < 4 && map[(int) tileX, (int) tileY].hasPiece() == false)
+        else if (piece == GameState.PEASANT_INIT && PeasantCount < 16 && tileY < 4 && map[tileX, tileY].hasPiece() == false)
         {
             ++PeasantCount;
             if (PeasantCount == 16)
@@ -143,6 +141,20 @@ public class Board : MonoBehaviour {
     {
         Vector2 result = new Vector2(gridX + boardPosition.x, gridY + boardPosition.y);
         return result;
+    }
+
+    public static int RowFromID(int id) { return id / 10; }
+    public static int ColFromID(int id) { return id % 10; }
+
+    public int[] getKnightLocations()
+    {
+        int[] locationList = new int[KnightList.Count];
+        for (int i = 0; i < KnightList.Count; i++)
+        {
+            locationList[i] = KnightList[i].tileID;
+        }
+
+        return locationList;
     }
 
     // Update is called once per frame

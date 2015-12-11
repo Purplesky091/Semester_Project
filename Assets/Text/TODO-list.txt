@@ -7,4 +7,5 @@ Remove pieces from the board
 
 REMAINING
 - interface with backend
+- get tile ID's from the pieces themselves
 - Draw pieces at specified locations. (Knight and peasant phase)

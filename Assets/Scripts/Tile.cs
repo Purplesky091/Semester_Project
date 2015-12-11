@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Assets.Scripts;
-using System.Collections;
 
 public class Tile : MonoBehaviour {
 

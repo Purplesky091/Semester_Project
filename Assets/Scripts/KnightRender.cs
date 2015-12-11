@@ -1,11 +1,28 @@
 ﻿using UnityEngine;
 using Assets.Scripts;
-using System.Collections;
 
 public class KnightRender : MonoBehaviour
 {
+    /// <summary>
+    /// The grid positions it holds are
+    /// x = column
+    /// y = row.
+    /// </summary>
     public Vector2Int gridPosition = Vector2Int.Zero;
     private Transform knightTransform;
+
+    public int tileID
+    {
+        get
+        {
+            return ((gridPosition.x * 10) + gridPosition.y);
+        }
+    }
+
+    public void MoveTo(int tileID)
+    {
+        Move(Board.ColFromID(tileID), Board.RowFromID(tileID));
+    }
 
     void Start()
     {
@@ -16,4 +33,6 @@ public class KnightRender : MonoBehaviour
     {
         knightTransform.position = Board.GridToScreenPoints(x, y);
     }
+
+
 }
