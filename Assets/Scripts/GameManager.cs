@@ -80,6 +80,22 @@ public class GameManager : MonoBehaviour {
                 Debug.Log("I'm on the knight phase!");
                 break;
 
+            case GameState.PEASANT:
+               /* if (mouseController.pollForLeftClick()
+                    && mouseController.lastCollidedObject.tag == "Peasant")
+                {
+                    Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
+                    int[] peasantLocations = backendLogic.GetPeasantLocations();
+                    foreach(int peasantLocation in peasantLocations)
+                    {
+                        int row = Board.RowFromID(peasantLocation);
+                        int col = Board.ColFromID(peasantLocation);
+                        if (row == tile.gridPosition.y && col == tile.gridPosition.x)
+                            tile.Highlight(HighlightType.Move);
+                    }
+
+                }*/
+                break;
             default:
                 print("Not implemented yet");
                 break;

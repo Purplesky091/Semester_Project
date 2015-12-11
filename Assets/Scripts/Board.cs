@@ -26,7 +26,7 @@ public class Board : MonoBehaviour {
         PeasantCount = 0;
         generateBoard();
         colorBoard();
-        boardHolder.position = new Vector2(-3.5f, -3.5f); //move the whole board to the center of the screen.
+        boardHolder.position = new Vector2(-3.5f, 3.5f); //move the whole board to the center of the screen.
         boardPosition = boardHolder.position;
     }
 
@@ -35,13 +35,13 @@ public class Board : MonoBehaviour {
     {
         for (int i = 0; i < boardSize; i++)
         {
-            for (int j = 0; j < boardSize; j++)
+            for (int j = 0; j > -boardSize; j--)
             {
                 Tile tile = (Instantiate(TilePrefab, new Vector2(i, j), Quaternion.identity) as GameObject).GetComponent<Tile>();
-                tile.Initialize(new Vector2Int(i, j), (i * 10) + j);
+                tile.Initialize(new Vector2Int(i, j), (-j * 10) + i);
                 //tile.gridPosition = new Vector2(i, j); //sets the tile's row/column
-                map[i, j] = tile; 
-                map[i, j].transform.SetParent(boardHolder);
+                map[i, -j] = tile; 
+                map[i, -j].transform.SetParent(boardHolder);
             }
         }
     }
@@ -78,7 +78,7 @@ public class Board : MonoBehaviour {
 
     public void SetPiece(int tileX, int tileY, GameState piece)
     {
-        if (piece == GameState.KNIGHT_INIT && KnightCount < 4 && tileY == 7 && map[tileX, tileY].hasPiece() == false)
+        if (piece == GameState.KNIGHT_INIT && KnightCount < 4 && tileY == 0 && map[tileX, -tileY].hasPiece() == false)
         {
             ++KnightCount;
             if (KnightCount == 4)
@@ -89,10 +89,10 @@ public class Board : MonoBehaviour {
             newKnight.GetComponent<KnightRender>().gridPosition = new Vector2Int(tileX, tileY);
             newKnight.transform.SetParent(knightHolder); //makes the knights a child of the empty knight game object.
 
-            map[tileX, tileY].setKnight(true);
-            map[tileX, tileY].ColliderSwitch(false);
+            map[tileX, -tileY].setKnight(true);
+            map[tileX, -tileY].ColliderSwitch(false);
         }
-        else if (piece == GameState.PEASANT_INIT && PeasantCount < 16 && tileY < 4 && map[tileX, tileY].hasPiece() == false)
+        else if (piece == GameState.PEASANT_INIT && PeasantCount < 16 && tileY < -3 && map[tileX, -tileY].hasPiece() == false)
         {
             ++PeasantCount;
             if (PeasantCount == 16)
@@ -102,8 +102,8 @@ public class Board : MonoBehaviour {
             newPeasant.transform.SetParent(peasantHolder);
             newPeasant.GetComponent<PeasantRender>().gridPosition = new Vector2Int(tileX, tileY);
 
-            map[tileX, tileY].setPeasant(true);
-            map[tileX, tileY].ColliderSwitch(false);
+            map[tileX, -tileY].setPeasant(true);
+            map[tileX, -tileY].ColliderSwitch(false);
         }
     }
 
@@ -161,16 +161,16 @@ public class Board : MonoBehaviour {
     {
         Destroy(piece);
         --KnightCount;
-        map[tileX, tileY].setKnight(false);
-        map[tileX, tileY].ColliderSwitch(true);
+        map[tileX, -tileY].setKnight(false);
+        map[tileX, -tileY].ColliderSwitch(true);
     }
 
     private void KillPeasant(int tileX, int tileY, GameObject piece)
     {
         Destroy(piece);
         --PeasantCount;
-        map[tileX, tileY].setPeasant(false);
-        map[tileX, tileY].ColliderSwitch(true);
+        map[tileX, -tileY].setPeasant(false);
+        map[tileX, -tileY].ColliderSwitch(true);
     }
 
     public void InitKnightList()
