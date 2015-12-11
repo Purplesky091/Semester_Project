@@ -241,6 +241,20 @@ public class Board : MonoBehaviour {
         }
     }
 
+    public void UnhighlightTile(int tileID)
+    {
+        int col = ColFromID(tileID);
+        int row = RowFromID(tileID);
+
+        map[row, col].Unhighlight();
+    }
+
+    public void UnhighlightTiles(int[] tileIDs)
+    {
+        foreach (int i in tileIDs)
+            UnhighlightTile(i);
+    }
+
     // Update is called once per frame
     void Update () {
 	

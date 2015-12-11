@@ -11,6 +11,8 @@ public class Tile : MonoBehaviour {
     //public Vector2 gridPosition = Vector2.zero;
     private BoxCollider2D boxCollider;
     public int Id;
+    public bool isHighlighted { get; private set; }
+
 
     void Awake()
     {
@@ -55,11 +57,13 @@ public class Tile : MonoBehaviour {
                 spriteRenderer.color = Constants.MoveColor;
                 break;
         }
+        isHighlighted = true;
     }
 
     public void Unhighlight()
     {
         spriteRenderer.color = isDarkTile ? ColorConverter.GetUnityColor(83f, 70f, 70f) : Color.white;
+        isHighlighted = false;
     }
 
 

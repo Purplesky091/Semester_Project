@@ -83,9 +83,26 @@ public class GameManager : MonoBehaviour {
                     KnightRender knight = mouseController.lastCollidedObject.gameObject.GetComponent<KnightRender>();
                     moveLocations = backendLogic.GetMoveLocations(knight.tileID);
                     board.HighlightTiles(moveLocations);
+                    piecePhase = GameState.KNIGHT_SELECTED;
                 }
                 break;
 
+            case GameState.KNIGHT_SELECTED:
+                if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Tile")
+                {
+                    Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
+                    if (tile.isHighlighted)
+                    {
+                        Debug.Log("Not implemented yet");
+                        board.UnhighlightTiles(moveLocations);
+                    }
+                    else
+                    {
+                        board.UnhighlightTiles(moveLocations);
+                        piecePhase = GameState.KNIGHT_UNSELECTED;
+                    }
+                }
+                break;
 
             case GameState.PEASANT:
                /* if (mouseController.pollForLeftClick()
