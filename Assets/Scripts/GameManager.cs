@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Assets.Scripts;
+using Pillage;
 
 public class GameManager : MonoBehaviour {
    // public static GameManager instance;
@@ -7,6 +8,7 @@ public class GameManager : MonoBehaviour {
     private static bool alertAnswer;
     public Board board;
     private MouseController mouseController;
+    BackendLogic backendLogic;
 
     // create the board.
     void Start()
@@ -15,6 +17,7 @@ public class GameManager : MonoBehaviour {
         alertAnswer = false;
         mouseController = GetComponent<MouseController>();
         piecePhase = GameState.KNIGHT_INIT;
+        backendLogic = new BackendLogic();
     }
 
     // Update is called once per frame
@@ -41,6 +44,7 @@ public class GameManager : MonoBehaviour {
                 if (checkAlertAnswer())
                 {
                     board.InitKnightList();
+                    backendLogic.PlaceStartingKnights(board.getKnightLocations());
                     AlertScript.instance.ActivateAlertBox(false, "Peasant player, please arrange your sixteen pieces in the bottom four rows.");
                     piecePhase = GameState.PEASANT_INIT;
                 }
@@ -66,6 +70,7 @@ public class GameManager : MonoBehaviour {
                 if (checkAlertAnswer())
                 {
                     board.InitPeasantList();
+                    backendLogic.PlaceStartingPeasants(board.getPeasantLocations());
                     AlertScript.instance.ActivateAlertBox(false, "Let the games begin!");
                     piecePhase = GameState.KNIGHT;
                 }

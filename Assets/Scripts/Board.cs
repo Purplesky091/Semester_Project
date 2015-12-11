@@ -109,6 +109,36 @@ public class Board : MonoBehaviour {
 
     public void DeletePiece(int tileX, int tileY, GameObject piece, GameState piecePhase)
     {
+        switch (piecePhase)
+        {
+            case GameState.KNIGHT_INIT:
+                if (piece.tag == "Knight")
+                {
+                    KillKnight(tileX, tileY, piece);
+                }
+                break;
+
+            case GameState.PEASANT_INIT:
+                if (piece.tag == "Peasant")
+                {
+                    KillPeasant(tileX, tileY, piece);
+                }
+                break;
+
+            default:
+                if (piece.tag == "Knight")
+                {
+                    KnightList.Remove(piece.GetComponent<KnightRender>());
+                    KillKnight(tileX, tileY, piece);
+                }
+                else if (piece.tag == "Peasant")
+                {
+                    PeasantList.Remove(piece.GetComponent<PeasantRender>());
+                    KillPeasant(tileX, tileY, piece);
+                }
+                break;
+        }
+        /*
         if (piece.tag == "Knight" && piecePhase == GameState.KNIGHT_INIT)
         {
             Destroy(piece);
@@ -123,6 +153,24 @@ public class Board : MonoBehaviour {
             map[tileX, tileY].setPeasant(false);
             map[tileX, tileY].ColliderSwitch(true);
         }
+        */
+
+    }
+
+    private void KillKnight(int tileX, int tileY, GameObject piece)
+    {
+        Destroy(piece);
+        --KnightCount;
+        map[tileX, tileY].setKnight(false);
+        map[tileX, tileY].ColliderSwitch(true);
+    }
+
+    private void KillPeasant(int tileX, int tileY, GameObject piece)
+    {
+        Destroy(piece);
+        --PeasantCount;
+        map[tileX, tileY].setPeasant(false);
+        map[tileX, tileY].ColliderSwitch(true);
     }
 
     public void InitKnightList()
@@ -136,6 +184,8 @@ public class Board : MonoBehaviour {
         PeasantRender[] peasants = peasantHolder.GetComponentsInChildren<PeasantRender>();
         PeasantList = new List<PeasantRender>(peasants);
     }
+
+    
 
     public static Vector2 GridToScreenPoints(int gridX, int gridY)
     {
@@ -155,6 +205,25 @@ public class Board : MonoBehaviour {
         }
 
         return locationList;
+    }
+
+    public int[] getPeasantLocations()
+    {
+        int[] locationList = new int[PeasantList.Count];
+        for (int i = 0; i < PeasantList.Count; i++)
+        {
+            locationList[i] = PeasantList[i].tileID;
+        }
+
+        return locationList;
+    }
+
+    public void HighlightTile(int tileID)
+    {
+        int col = ColFromID(tileID);
+        int row = RowFromID(tileID);
+
+        map[row, col].Highlight(HighlightType.Attack);
     }
 
     // Update is called once per frame

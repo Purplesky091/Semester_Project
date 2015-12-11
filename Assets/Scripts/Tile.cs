@@ -80,18 +80,6 @@ public class Tile : MonoBehaviour {
     {
         this.hasPeasant = hasPeasant;
     }
-
-    // tests highlighting
-    void OnMouseEnter()
-    {
-        Highlight(HighlightType.Move);
-    }
-
-    // tests highlighting
-    void OnMouseExit()
-    {
-        Unhighlight();
-    }
  
     public void ColliderSwitch(bool colliderOn)
     {
