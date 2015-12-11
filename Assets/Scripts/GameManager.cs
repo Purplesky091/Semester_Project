@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
     public Board board;
     private MouseController mouseController;
     BackendLogic backendLogic;
+    private int[] moveLocations;
 
     // create the board.
     void Start()
@@ -72,13 +73,19 @@ public class GameManager : MonoBehaviour {
                     board.InitPeasantList();
                     backendLogic.PlaceStartingPeasants(board.getPeasantLocations());
                     AlertScript.instance.ActivateAlertBox(false, "Let the games begin!");
-                    piecePhase = GameState.KNIGHT;
+                    piecePhase = GameState.KNIGHT_UNSELECTED;
                 }
                 break;
 
-            case GameState.KNIGHT:
-                Debug.Log("I'm on the knight phase!");
+            case GameState.KNIGHT_UNSELECTED:
+                if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Knight")
+                {
+                    KnightRender knight = mouseController.lastCollidedObject.gameObject.GetComponent<KnightRender>();
+                    moveLocations = backendLogic.GetMoveLocations(knight.tileID);
+                    board.HighlightTiles(moveLocations);
+                }
                 break;
+
 
             case GameState.PEASANT:
                /* if (mouseController.pollForLeftClick()

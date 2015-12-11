@@ -86,8 +86,11 @@ public class Board : MonoBehaviour {
 
             // creates a new knight on the board and returns the knight just created.
             GameObject newKnight = Instantiate(KnightPrefab, new Vector2(tileX + boardHolder.position.x, tileY + boardHolder.position.y), Quaternion.identity) as GameObject;
-            newKnight.GetComponent<KnightRender>().gridPosition = new Vector2Int(tileX, tileY);
+            KnightRender knight = newKnight.GetComponent<KnightRender>();
+            knight.gridPosition = new Vector2Int(tileX, tileY);
+            knight.tileID = map[tileX, -tileY].Id;
             newKnight.transform.SetParent(knightHolder); //makes the knights a child of the empty knight game object.
+
 
             map[tileX, -tileY].setKnight(true);
             map[tileX, -tileY].ColliderSwitch(false);
@@ -100,6 +103,10 @@ public class Board : MonoBehaviour {
 
             GameObject newPeasant = Instantiate(PeasantPrefab, new Vector2(tileX + boardHolder.position.x, tileY + boardHolder.position.y), Quaternion.identity) as GameObject;
             newPeasant.transform.SetParent(peasantHolder);
+            PeasantRender peasant = newPeasant.GetComponent<PeasantRender>();
+            peasant.gridPosition = new Vector2Int(tileX, tileY);
+            peasant.tileID = map[tileX, -tileY].Id;
+
             newPeasant.GetComponent<PeasantRender>().gridPosition = new Vector2Int(tileX, tileY);
 
             map[tileX, -tileY].setPeasant(true);
@@ -193,8 +200,8 @@ public class Board : MonoBehaviour {
         return result;
     }
 
-    public static int RowFromID(int id) { return id / 10; }
-    public static int ColFromID(int id) { return id % 10; }
+    public static int RowFromID(int id) { return id % 10;  }
+    public static int ColFromID(int id) { return id / 10; }
 
     public int[] getKnightLocations()
     {
@@ -224,6 +231,14 @@ public class Board : MonoBehaviour {
         int row = RowFromID(tileID);
 
         map[row, col].Highlight(HighlightType.Attack);
+    }
+
+    public void HighlightTiles(int[] tileIDs)
+    {
+        foreach (int i in tileIDs)
+        {
+            HighlightTile(i);
+        }
     }
 
     // Update is called once per frame

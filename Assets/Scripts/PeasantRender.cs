@@ -5,13 +5,7 @@ public class PeasantRender : MonoBehaviour
 {
     public Vector2Int gridPosition = Vector2Int.Zero;
     private Transform peasantTransform;
-    public int tileID
-    {
-        get
-        {
-            return ((gridPosition.x * 10) + gridPosition.y);
-        }
-    }
+    public int tileID;
 
     void Start()
     {

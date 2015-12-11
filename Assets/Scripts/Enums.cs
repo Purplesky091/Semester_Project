@@ -4,9 +4,10 @@
     {
         KNIGHT_INIT,
         PEASANT_INIT,
-        KNIGHT,
+        KNIGHT_UNSELECTED,
+        KNIGHT_SELECTED,
         PEASANT
     }
 
-    public enum HighlightType{ Attack, Move }
+    public enum HighlightType { Attack, Move }
 }

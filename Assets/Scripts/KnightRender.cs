@@ -11,13 +11,7 @@ public class KnightRender : MonoBehaviour
     public Vector2Int gridPosition = Vector2Int.Zero;
     private Transform knightTransform;
 
-    public int tileID
-    {
-        get
-        {
-            return ((gridPosition.x * 10) + gridPosition.y);
-        }
-    }
+    public int tileID;
 
     public void MoveTo(int tileID)
     {
