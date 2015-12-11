@@ -5,6 +5,8 @@ using System.Collections;
 public class Tile : MonoBehaviour {
 
     private SpriteRenderer spriteRenderer;
+    private bool hasKnight;
+    private bool hasPeasant;
     public Vector2 gridPosition = Vector2.zero;
 
     void Awake()
@@ -30,9 +32,27 @@ public class Tile : MonoBehaviour {
         spriteRenderer.color = ColorConverter.GetUnityColor(83f, 70f, 70f);
     }
 
+    public bool hasPiece()
+    {
+        if (hasKnight || hasPeasant)
+            return true;
+        else
+            return false;
+    }
+
+    public void setKnight(bool hasKnight)
+    {
+        this.hasKnight = hasKnight;
+    }
+
+    public void setPeasant(bool hasPeasant)
+    {
+        this.hasPeasant = hasPeasant;
+    }
+
     void OnMouseEnter()
     {
-        Debug.Log("I'm position (" + gridPosition.x + "," + gridPosition.y + ")");
+       // Debug.Log("I'm position (" + gridPosition.x + "," + gridPosition.y + ")");
     }
  
     void OnMouseDown()
