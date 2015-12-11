@@ -7,6 +7,7 @@ public class Tile : MonoBehaviour {
     private SpriteRenderer spriteRenderer;
     private bool hasKnight;
     private bool hasPeasant;
+    private bool isDarkTile = false;
     public Vector2 gridPosition = Vector2.zero;
     private BoxCollider2D boxCollider;
 
@@ -32,7 +33,28 @@ public class Tile : MonoBehaviour {
     public void MakeTileDark()
     {
         spriteRenderer.color = ColorConverter.GetUnityColor(83f, 70f, 70f);
+        isDarkTile = true;
     }
+
+    public void Highlight(HighlightType highlightType)
+    {
+        switch (highlightType)
+        {
+            case HighlightType.Attack:
+                spriteRenderer.color = Constants.AttackColor;
+                break;
+
+            case HighlightType.Move:
+                spriteRenderer.color = Constants.MoveColor;
+                break;
+        }
+    }
+
+    public void Unhighlight()
+    {
+        spriteRenderer.color = isDarkTile ? ColorConverter.GetUnityColor(83f, 70f, 70f) : Color.white;
+    }
+
 
     public bool hasPiece()
     {
@@ -52,9 +74,16 @@ public class Tile : MonoBehaviour {
         this.hasPeasant = hasPeasant;
     }
 
+    // tests highlighting
     void OnMouseEnter()
     {
-       // Debug.Log("I'm position (" + gridPosition.x + "," + gridPosition.y + ")");
+        Highlight(HighlightType.Move);
+    }
+
+    // tests highlighting
+    void OnMouseExit()
+    {
+        Unhighlight();
     }
  
     void OnMouseDown()

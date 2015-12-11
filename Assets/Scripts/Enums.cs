@@ -10,4 +10,6 @@ namespace Assets.Scripts
         KNIGHT,
         PEASANT
     }
+
+    public enum HighlightType{ Attack, Move }
 }
