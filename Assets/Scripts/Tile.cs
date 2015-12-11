@@ -86,13 +86,6 @@ public class Tile : MonoBehaviour {
         Unhighlight();
     }
  
-    /*
-    void OnMouseDown()
-    {
-        if (!AlertScript.instance.isActive())
-            GameManager.instance.SpawnPlayer(this.gridPosition.x, this.gridPosition.y);
-    }
-    */
     public void ColliderSwitch(bool colliderOn)
     {
         boxCollider.enabled = colliderOn;

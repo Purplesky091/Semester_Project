@@ -37,14 +37,14 @@ public class AlertScript : MonoBehaviour
     {
         AlertMenu.enabled = false;
         active = false;
-        GameManager.instance.recieveAlertAnswer(true);
+        GameManager.recieveAlertAnswer(true);
     }
 
     public void NOPress ()
     {
         AlertMenu.enabled = false;
         active = false;
-        GameManager.instance.recieveAlertAnswer(false);
+        GameManager.recieveAlertAnswer(false);
     }
 
     public void ActivateAlertBox (bool isYesNo, string newAlertText)

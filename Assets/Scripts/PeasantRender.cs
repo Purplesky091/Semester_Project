@@ -4,16 +4,15 @@ using System.Collections;
 public class PeasantRender : MonoBehaviour
 {
     public Vector2 gridPosition = Vector2.zero;
+    private Transform peasantTransform;
 
-    void OnMouseOver()
+    void Start()
     {
-        if (Input.GetMouseButtonDown(1))
-            OnRightMouseDown();
+        peasantTransform = transform;
     }
 
-    void OnRightMouseDown()
+    public void Move(float x, float y)
     {
-        if (!AlertScript.instance.isActive())
-            GameManager.instance.DeletePlayer(this.gridPosition.x, this.gridPosition.y, this.gameObject);
+        peasantTransform.position = Board.GridToScreenPoints(x, y);
     }
 }

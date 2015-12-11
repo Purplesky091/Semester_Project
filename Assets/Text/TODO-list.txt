@@ -1,5 +1,11 @@
-Draw pieces at specified locations. 
+FINISHED
+
 Get clicks on a board at given locations and pass them through to the right spot. 
 Highlight tiles. 
 Remove the highlight on tiles.
 Remove pieces from the board
+
+REMAINING
+- interface with backend
+- Draw pieces at specified locations. (Knight and peasant phase)
+- change pieceEnum to Turn

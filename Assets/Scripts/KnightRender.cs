@@ -4,16 +4,15 @@ using System.Collections;
 public class KnightRender : MonoBehaviour
 {
     public Vector2 gridPosition = Vector2.zero;
+    private Transform knightTransform;
 
-    void OnMouseOver()
+    void Start()
     {
-        if (Input.GetMouseButtonDown(1))
-            OnRightMouseDown();
+        knightTransform = transform; //saves the GetComponent<>() call.
     }
 
-    void OnRightMouseDown()
+    public void Move(float x, float y)
     {
-        if (!AlertScript.instance.isActive())
-            GameManager.instance.DeletePlayer(this.gridPosition.x, this.gridPosition.y, this.gameObject);
+        knightTransform.position = Board.GridToScreenPoints(x, y);
     }
 }

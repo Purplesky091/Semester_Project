@@ -3,16 +3,16 @@ using System.Collections;
 using Assets.Scripts;
 
 public class GameManager : MonoBehaviour {
-    public static GameManager instance;
+   // public static GameManager instance;
     public PieceEnum piecePhase;
-    private bool alertAnswer;
+    private static bool alertAnswer;
     public Board board;
     private MouseController mouseController;
 
     // create the board.
     void Start()
     {
-        instance = this;
+       // instance = this;
         alertAnswer = false;
         mouseController = GetComponent<MouseController>();
         piecePhase = PieceEnum.KNIGHT_INIT;
@@ -41,15 +41,33 @@ public class GameManager : MonoBehaviour {
                 //transition to the next state.
                 if (checkAlertAnswer())
                 {
+                    AlertScript.instance.ActivateAlertBox(false, "Peasant player, please arrange your sixteen pieces in the bottom four rows.");
                     piecePhase = PieceEnum.PEASANT_INIT;
                 }
                 break;
 
             //TODO - implement peasant initialization phase
             case PieceEnum.PEASANT_INIT:
-                Debug.Log("We're on the peasant phase!");
+                if (mouseController.pollForLeftClick()
+                    && mouseController.lastCollidedObject.tag == "Tile")
+                {
+                    Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
+                    SpawnPlayer(tile.gridPosition.x, tile.gridPosition.y);
+                }
+
+                else if (mouseController.pollForRightClick()
+                    && mouseController.lastCollidedObject.tag == "Peasant")
+                {
+                    PeasantRender peasant = mouseController.lastCollidedObject.gameObject.GetComponent<PeasantRender>();
+                    DeletePlayer(peasant.gridPosition.x, peasant.gridPosition.y, peasant.gameObject);
+                }
+
+                //transition to the next state.
                 if (checkAlertAnswer())
+                {
+                    AlertScript.instance.ActivateAlertBox(false, "Let the games begin!");
                     piecePhase = PieceEnum.KNIGHT;
+                }
                 break;
 
             case PieceEnum.KNIGHT:
@@ -60,21 +78,6 @@ public class GameManager : MonoBehaviour {
                 print("Not implemented yet");
                 break;
         }
-
-        /*
-        if (alertAnswer == true && piecePhase == PieceEnum.KNIGHT)
-        {
-            piecePhase = PieceEnum.PEASANT;
-            AlertScript.instance.ActivateAlertBox(false, "Peasant player, please arrange your sixteen pieces in the bottom four rows.");
-        }
-        else if (alertAnswer == true && piecePhase == PieceEnum.PEASANT)
-        {
-            piecePhase = PieceEnum.KNIGHT;
-            AlertScript.instance.ActivateAlertBox(false, "The game may now begin!");
-        }
-
-        alertAnswer = null;
-        */
     }
 
     private void processClick()
@@ -98,7 +101,7 @@ public class GameManager : MonoBehaviour {
         board.DeletePiece(tileX, tileY, piece, piecePhase);
     }
 
-    public void recieveAlertAnswer(bool answer)
+    public static void recieveAlertAnswer(bool answer)
     {
         alertAnswer = answer;
     }

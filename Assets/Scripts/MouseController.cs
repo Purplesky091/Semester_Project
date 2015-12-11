@@ -43,25 +43,4 @@ public class MouseController : MonoBehaviour {
         }
     }
 
-    /*
-    public bool WasLeftClicked()
-    {
-        //resets the value of wasLeftClicked so that it won't always return true.
-        bool returnVal = wasLeftClicked;
-        wasLeftClicked = false;
-        return returnVal;
-    }
-
-    public bool WasRightClicked()
-    {
-        //resets the value of wasRightClicked so that it won't always return true.
-        bool returnVal = wasRightClicked;
-        wasRightClicked = false;
-        return returnVal;
-    }
-    */
-    // Update is called once per frame
-    void Update () {
-	
-	}
 }
