@@ -6,6 +6,11 @@ Remove the highlight on tiles.
 Remove pieces from the board
 
 REMAINING
-- interface with backend
-- get tile ID's from the pieces themselves
+- interface with backend ~IMPORTANT
 - Draw pieces at specified locations. (Knight and peasant phase)
+- have knights in an array
+- have peasants in an array
+- board controls pieces
+- convert gridPosition to a Vector2int ~done
+
+ 

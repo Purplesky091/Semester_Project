@@ -119,8 +119,10 @@ public class Board : MonoBehaviour {
     {
         foreach (KnightRender knight in KnightList)
         {
-            DeletePiece(knight.gameObject, knight.tileID);
+            DeleteKnight(knight.gameObject, knight.tileID);
         }
+
+        KnightList.Clear();
     }
 
     public void DrawKnights(int[] tileLocations)
@@ -134,18 +136,29 @@ public class Board : MonoBehaviour {
         }
     }
 
+    public void moveKnights(int[] tileLocations)
+    {
+        for (int i = 0; i < tileLocations.Length; i++)
+        {
+            KnightList[i].MoveTo(tileLocations[i]);
+        }
+    }
+
+    //todo fix later
     public void drawKnight(int tileX, int tileY)
     {
         // creates a new knight on the board and returns the knight just created.
-        GameObject newKnight = Instantiate(KnightPrefab, new Vector2(tileX + boardHolder.position.x, tileY + boardHolder.position.y), Quaternion.identity) as GameObject;
+        GameObject newKnight = Instantiate(KnightPrefab, new Vector2(tileY, -tileX) + boardPosition, Quaternion.identity) as GameObject;
         KnightRender knight = newKnight.GetComponent<KnightRender>();
-        knight.gridPosition = new Vector2Int(tileX, tileY);
-        knight.tileID = map[tileX, -tileY].Id;
+        knight.gridPosition = new Vector2Int(tileY, tileX);
+        knight.tileID = map[tileY, tileX].Id;
+
+        KnightList.Add(knight);
         newKnight.transform.SetParent(knightHolder); //makes the knights a child of the empty knight game object.
 
+        map[tileY, tileX].setKnight(true);
+        map[tileY, tileX].ColliderSwitch(false);
 
-        map[tileX, -tileY].setKnight(true);
-        map[tileX, -tileY].ColliderSwitch(false);
     }
 
     public void DeletePiece(int tileX, int tileY, GameObject piece, GameState piecePhase)
@@ -179,26 +192,25 @@ public class Board : MonoBehaviour {
                 }
                 break;
         }
-        /*
-        if (piece.tag == "Knight" && piecePhase == GameState.KNIGHT_INIT)
-        {
-            Destroy(piece);
-            --KnightCount;
-            map[tileX, tileY].setKnight(false);
-            map[tileX, tileY].ColliderSwitch(true);
-        }
-        else if (piece.tag == "Peasant" && piecePhase == GameState.PEASANT_INIT)
-        {
-            Destroy(piece);
-            --PeasantCount;
-            map[tileX, tileY].setPeasant(false);
-            map[tileX, tileY].ColliderSwitch(true);
-        }
-        */
 
     }
 
+    public void DeleteKnight(GameObject piece, int tileID)
+    {
+        int row = RowFromID(tileID);
+        int col = ColFromID(tileID);
+        if (row == -1 || col == -1)
+            return;
 
+        Destroy(piece);
+
+        if (piece.tag == "Knight")
+        {
+            --KnightCount;
+            map[row, col].setKnight(false);
+            map[row, col].ColliderSwitch(true);
+        }
+    }
 
     public void DeletePiece(GameObject piece, int tileID)
     {

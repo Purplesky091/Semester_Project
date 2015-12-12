@@ -8,7 +8,8 @@
         KNIGHT_SELECTED,
         KNIGHT_ATTACK,
         PEASANT_UNSELECTED,
-        PEASANT_SELECTED
+        PEASANT_SELECTED,
+        GAME_OVER
     }
 
     public enum HighlightType { Attack, Move }

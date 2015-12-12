@@ -139,11 +139,18 @@ namespace Pillage
             int[] output = map[RowFromID(TileID)][ColFromID(TileID)].PieceOnTile.GetValidAttacks();
 
             for (int i = 0; i < output.Length; i++)
-                if (map[RowFromID(output[i])][ColFromID(output[i])].PieceOnTile == null)
-                    output[i] = -1;
-                else
-                    if(map[RowFromID(output[i])][ColFromID(output[i])].PieceOnTile.PieceType != Piece.Type.Peasant)
+            {
+                if (output[i] != -1)
+                {
+                    if (map[RowFromID(output[i])][ColFromID(output[i])].PieceOnTile == null)
                         output[i] = -1;
+                    else if (map[RowFromID(output[i])][ColFromID(output[i])].PieceOnTile.PieceType != Piece.Type.Peasant)
+                        output[i] = -1;
+                }
+
+
+            }
+                
 
             output = RemoveFromArray(output, -1);
 

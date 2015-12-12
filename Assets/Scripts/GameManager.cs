@@ -109,8 +109,14 @@ public class GameManager : MonoBehaviour {
                         attackLocations = backendLogic.GetAttackLocations(moveDest);
                         peasantMoveCount = 0;
                         backendLogic.BoardCleanup();
+                        if (!backendLogic.IsGameRunning())
+                        {
+                            piecePhase = GameState.GAME_OVER;
+                            break;
+                        }
+
                         board.ClearAllKnights();
-                        //board.DrawKnights(backendLogic.GetKnightLocations());
+                        board.DrawKnights(backendLogic.GetKnightLocations());
                     }
                     else
                     {
@@ -139,39 +145,19 @@ public class GameManager : MonoBehaviour {
                             backendLogic.AttackLocation(attack);
                             board.UnhighlightTiles(attackLocations);
                             piecePhase = GameState.PEASANT_UNSELECTED;
+
+                            if (!backendLogic.IsGameRunning())
+                            {
+                                piecePhase = GameState.GAME_OVER;
+                                break;
+                            }
                         }
                     }
                 }
                 else
                     piecePhase = GameState.PEASANT_UNSELECTED;
-
-
+                
                 break;
-            /*
-            int[] attackLocations = backendLogic.GetAttackLocations(moveDest);
-            if (attackLocations.Length > 0)
-            {
-                board.HighlightTiles(attackLocations, HighlightType.Attack);
-                Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
-
-                if(mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Peasant")
-                {
-                    print("deleteing peasant");
-                    PeasantRender peasant = mouseController.lastCollidedObject.gameObject.GetComponent<PeasantRender>();
-                    if (board.isTileHighlighted(peasant.tileID))
-                    {
-                        board.DeletePiece(peasant.gameObject, peasant.tileID);
-                        backendLogic.AttackLocation(peasant.tileID);
-                    }
-                    else
-                    {
-                        //piecePhase = GameState.KNIGHT_UNSELECTED;
-                    }
-                }
-            }
-            */
-
-
             case GameState.PEASANT_UNSELECTED:
                 if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Peasant")
                 {
@@ -195,23 +181,59 @@ public class GameManager : MonoBehaviour {
                         board.movePeasant(selectedPeasant, moveDest);
                         board.UnhighlightTiles(moveLocations);
                         peasantMoveCount++;
-                        if (peasantMoveCount < 6)
+
+                        //redraw knights
+                        board.ClearAllKnights();
+                        board.DrawKnights(backendLogic.GetKnightLocations());
+                        if (peasantMoveCount < 5)
                             piecePhase = GameState.PEASANT_UNSELECTED;
                         else
                             piecePhase = GameState.KNIGHT_UNSELECTED;
                         //piecePhase = GameState.KNIGHT_ATTACK;
                         backendLogic.BoardCleanup();
+
+                        if (!backendLogic.IsGameRunning())
+                        {
+                            piecePhase = GameState.GAME_OVER;
+                            break;
+                        }
                     }
                     else
                     {
                         board.UnhighlightTiles(moveLocations);
                         backendLogic.BoardCleanup();
+
+                        if (!backendLogic.IsGameRunning())
+                        {
+                            piecePhase = GameState.GAME_OVER;
+                            break;
+                        }
                         piecePhase = GameState.PEASANT_UNSELECTED;
                     }
                 }
                 break;
-            default:
-                print("Not implemented yet");
+
+            case GameState.GAME_OVER:
+                switch (backendLogic.GetWinCondition())
+                {
+                    /* 
+                    * 1 = Peasants win
+                    * 2 = Knight wins by killing peasants
+                    * 3 = Knight wins by pillaging village
+                    */
+
+                    case 1:
+                        Application.LoadLevel("PeasantWin");
+                        break;
+
+                    case 2:
+                        Application.LoadLevel("KnightKillPeasantsWin");
+                        break;
+
+                    case 3:
+                        Application.LoadLevel("KnightWin");
+                        break;
+                }
                 break;
         }
     }

@@ -12,6 +12,8 @@ public class Tile : MonoBehaviour {
     private BoxCollider2D boxCollider;
     public int Id;
     public bool isHighlighted { get; private set; }
+    public int x;
+    public int y;
 
 
     void Awake()
@@ -33,6 +35,8 @@ public class Tile : MonoBehaviour {
     public void Initialize(Vector2Int gridPos, int id)
     {
         gridPosition = gridPos;
+        x = gridPos.x;
+        y = gridPos.y;
         Id = id;
     }
 

@@ -10,6 +10,16 @@
             
         }
 
+        public bool IsGameRunning()
+        {
+            return map.GameRunning;
+        }
+
+        public int GetWinCondition()
+        {
+            return map.GameWinCondition;
+        }
+
         public int[] GetKnightLocations()
         {
             return map.GetPiecesByType(Piece.Type.Knight);
