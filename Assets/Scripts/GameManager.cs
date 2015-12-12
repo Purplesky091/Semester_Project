@@ -10,6 +10,13 @@ public class GameManager : MonoBehaviour {
     private MouseController mouseController;
     BackendLogic backendLogic;
     private int[] moveLocations;
+    private int[] attackLocations;
+    KnightRender selectedKnight;
+    PeasantRender selectedPeasant;
+    int piece;
+    int moveDest;
+    int attack;
+    int peasantMoveCount;
 
     // create the board.
     void Start()
@@ -80,8 +87,9 @@ public class GameManager : MonoBehaviour {
             case GameState.KNIGHT_UNSELECTED:
                 if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Knight")
                 {
-                    KnightRender knight = mouseController.lastCollidedObject.gameObject.GetComponent<KnightRender>();
-                    moveLocations = backendLogic.GetMoveLocations(knight.tileID);
+                    selectedKnight = mouseController.lastCollidedObject.gameObject.GetComponent<KnightRender>();
+                    piece = selectedKnight.tileID;
+                    moveLocations = backendLogic.GetMoveLocations(selectedKnight.tileID);
                     board.HighlightTiles(moveLocations);
                     piecePhase = GameState.KNIGHT_SELECTED;
                 }
@@ -93,8 +101,16 @@ public class GameManager : MonoBehaviour {
                     Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
                     if (tile.isHighlighted)
                     {
-                        Debug.Log("Not implemented yet");
+                        backendLogic.MovePiece(selectedKnight.tileID, tile.Id);
+                        moveDest = tile.Id;
+                        board.moveKnight(selectedKnight, tile.Id);
                         board.UnhighlightTiles(moveLocations);
+                        piecePhase = GameState.KNIGHT_ATTACK;
+                        attackLocations = backendLogic.GetAttackLocations(moveDest);
+                        peasantMoveCount = 0;
+                        backendLogic.BoardCleanup();
+                        board.ClearAllKnights();
+                        //board.DrawKnights(backendLogic.GetKnightLocations());
                     }
                     else
                     {
@@ -102,23 +118,97 @@ public class GameManager : MonoBehaviour {
                         piecePhase = GameState.KNIGHT_UNSELECTED;
                     }
                 }
+
+                
                 break;
 
-            case GameState.PEASANT:
-               /* if (mouseController.pollForLeftClick()
-                    && mouseController.lastCollidedObject.tag == "Peasant")
+            case GameState.KNIGHT_ATTACK:
+                if (attackLocations.Length > 0)
+                {
+                    board.HighlightTiles(attackLocations, HighlightType.Attack);
+
+                    if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Peasant")
+                    {
+
+                        PeasantRender peasant = mouseController.lastCollidedObject.gameObject.GetComponent<PeasantRender>();
+                        attack = peasant.tileID;
+                        print("memememe");
+                        if (board.isTileHighlighted(peasant.tileID))
+                        {
+                            board.DeletePiece(peasant.gameObject, attack);
+                            backendLogic.AttackLocation(attack);
+                            board.UnhighlightTiles(attackLocations);
+                            piecePhase = GameState.PEASANT_UNSELECTED;
+                        }
+                    }
+                }
+                else
+                    piecePhase = GameState.PEASANT_UNSELECTED;
+
+
+                break;
+            /*
+            int[] attackLocations = backendLogic.GetAttackLocations(moveDest);
+            if (attackLocations.Length > 0)
+            {
+                board.HighlightTiles(attackLocations, HighlightType.Attack);
+                Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
+
+                if(mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Peasant")
+                {
+                    print("deleteing peasant");
+                    PeasantRender peasant = mouseController.lastCollidedObject.gameObject.GetComponent<PeasantRender>();
+                    if (board.isTileHighlighted(peasant.tileID))
+                    {
+                        board.DeletePiece(peasant.gameObject, peasant.tileID);
+                        backendLogic.AttackLocation(peasant.tileID);
+                    }
+                    else
+                    {
+                        //piecePhase = GameState.KNIGHT_UNSELECTED;
+                    }
+                }
+            }
+            */
+
+
+            case GameState.PEASANT_UNSELECTED:
+                if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Peasant")
+                {
+                    selectedPeasant = mouseController.lastCollidedObject.gameObject.GetComponent<PeasantRender>();
+                    piece = selectedPeasant.tileID;
+                    moveLocations = backendLogic.GetMoveLocations(piece);
+                    board.HighlightTiles(moveLocations);
+                    piecePhase = GameState.PEASANT_SELECTED;
+                }
+  
+                break;
+
+            case GameState.PEASANT_SELECTED:
+                if (mouseController.pollForLeftClick() && mouseController.lastCollidedObject.tag == "Tile")
                 {
                     Tile tile = mouseController.lastCollidedObject.gameObject.GetComponent<Tile>();
-                    int[] peasantLocations = backendLogic.GetPeasantLocations();
-                    foreach(int peasantLocation in peasantLocations)
+                    if (tile.isHighlighted)
                     {
-                        int row = Board.RowFromID(peasantLocation);
-                        int col = Board.ColFromID(peasantLocation);
-                        if (row == tile.gridPosition.y && col == tile.gridPosition.x)
-                            tile.Highlight(HighlightType.Move);
+                        moveDest = tile.Id;
+                        backendLogic.MovePiece(piece, moveDest);
+                        board.movePeasant(selectedPeasant, moveDest);
+                        board.UnhighlightTiles(moveLocations);
+                        peasantMoveCount++;
+                        if (peasantMoveCount < 6)
+                            piecePhase = GameState.PEASANT_UNSELECTED;
+                        else
+                            piecePhase = GameState.KNIGHT_UNSELECTED;
+                        //piecePhase = GameState.KNIGHT_ATTACK;
+                        backendLogic.BoardCleanup();
                     }
-
-                }*/
+                    else
+                    {
+                        board.UnhighlightTiles(moveLocations);
+                        backendLogic.BoardCleanup();
+                        piecePhase = GameState.PEASANT_UNSELECTED;
+                    }
+                }
                 break;
             default:
                 print("Not implemented yet");
@@ -126,7 +216,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void processClick()
+    private void DoPeasantTurn()
     {
 
     }

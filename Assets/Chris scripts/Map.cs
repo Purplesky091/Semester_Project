@@ -9,6 +9,15 @@ namespace Pillage
         int[] KnightLocations = new int[4];
         int[] PeasantLocations = new int[16];
         private int pieceID = 0;
+        private int[] StoneLocations; 
+        private bool gameRunning = true;
+        private int winCondition = 0;           /* 0 = Game still running
+                                                 * 1 = Peasants win
+                                                 * 2 = Knight wins by killing peasants
+                                                 * 3 = Knight wins by pillaging village
+                                                 */
+                                      
+        
 
         public Map()
         {
@@ -27,9 +36,118 @@ namespace Pillage
             return (t == Piece.Type.Knight) ? RemoveFromArray(KnightLocations, -1) : RemoveFromArray(PeasantLocations, -1);
         }
 
+        public bool GameRunning
+        {
+            get
+            {
+                return gameRunning;
+            }
+        }
+
+        public int GameWinCondition
+        {
+            get
+            {
+                return winCondition;
+            }
+        }
+
+        public bool UpdateGameState()
+        {
+            bool output = KillSurroundedKnights();
+
+            if (GetSurvivingKnightCount() < 3)
+            {
+                gameRunning = false;
+                winCondition = 1;
+                //Do Peasant Win Logic Here
+            }
+            else if (GetSurvivingPeasantCount() < 4)
+            {
+                gameRunning = false;
+                winCondition = 2;
+                //Do Knight Win by death Logic Here
+            }
+            else if (CountPiecesOfTypeInRow(Piece.Type.Knight, 7) > 2)
+            {
+                gameRunning = false;
+                winCondition = 3;
+                //Do Knight wins by pillaging logic here
+            }
+
+            return output;
+        }
+
+        public void KnightAttack(int i)
+        {
+            int j = 0;
+
+            try
+            {
+                while (PeasantLocations[j] != i)
+                    j++;
+
+                PeasantLocations[j] = -1;
+            }
+            catch (Exception) { }
+
+            map[RowFromID(i)][ColFromID(i)].PieceOnTile = null;
+        }
+
+        public void SetStones(int numberOfStones)
+        {
+            if (numberOfStones > 0 && numberOfStones < 7)
+            {
+                Random r = new Random();
+                StoneLocations = new int[numberOfStones];
+
+                for (int i = 0; i < numberOfStones; i++)
+                {
+                    int row = r.Next(0, 7);
+                    int col = r.Next(0, 7);
+
+                    StoneLocations[i] = TileID(row, col);
+                    map[row][col].SetStone();
+                }
+            }
+        }
+
+        private int CountPiecesOfTypeInRow(Piece.Type t, int row)
+        {
+            int[] holder = (t == Piece.Type.Knight) ? KnightLocations : PeasantLocations;
+            int output = 0;
+
+            foreach (int i in holder)
+                if (RowFromID(i) == row)
+                    output++;
+
+            return output;
+        }
+
+        private int GetSurvivingKnightCount()
+        {
+            return RemoveFromArray(KnightLocations, -1).Length;
+        }
+
+        private int GetSurvivingPeasantCount()
+        {
+            return RemoveFromArray(PeasantLocations, -1).Length;
+        }
+
         public int[] GetValidAttackLocations(int TileID)
         {
-            return map[RowFromID(TileID)][ColFromID(TileID)].PieceOnTile.GetValidAttacks();
+            int[] output = map[RowFromID(TileID)][ColFromID(TileID)].PieceOnTile.GetValidAttacks();
+
+            for (int i = 0; i < output.Length; i++)
+                if (map[RowFromID(output[i])][ColFromID(output[i])].PieceOnTile == null)
+                    output[i] = -1;
+                else
+                    if(map[RowFromID(output[i])][ColFromID(output[i])].PieceOnTile.PieceType != Piece.Type.Peasant)
+                        output[i] = -1;
+
+            output = RemoveFromArray(output, -1);
+
+            return output;
         }
 
         public void PlaceInitialKnights(int[] startingLocations)
@@ -101,6 +219,8 @@ namespace Pillage
             map[dRow][dCol].Passable = false;
             map[cRow][cCol].PieceOnTile = null;
             map[cRow][cCol].Passable = true;
+
+            UpdateGameState();
         }
 
         private bool UpdateKnightLocations(int current, int destination)
@@ -168,21 +288,44 @@ namespace Pillage
             return output;
         }
 
-        public int[] KillSurroundedKnights()
+        public bool KillSurroundedKnights()
         {
-            int[] output = new int[4];
+            bool output = false;
 
             for (int i = 0; i < 4; i++)
             {
                 if (KnightLocations[i] == -1) continue;
-                int Row = RowFromID(KnightLocations[i]), Col = ColFromID(KnightLocations[i]);
+                int k = KnightLocations[i], up = TileAbove(k), down = TileBelow(k), left = TileLeft(k), right = TileRight(k);
+                if(up != -1)
+                    if (map[RowFromID(up)][ColFromID(up)].Passable)
+                        continue;
+                if(down != -1)
+                    if (map[RowFromID(down)][ColFromID(down)].Passable)
+                        continue;
+                if(left != -1)
+                    if (map[RowFromID(left)][ColFromID(left)].Passable)
+                        continue;
+                if(right != -1)
+                    if (map[RowFromID(right)][ColFromID(right)].Passable)
+                        continue;
 
+                KillKnight(k);
+                output = true;
             }
 
 
             return output;
 
 
+        }
+
+        private void KillKnight(int i)
+        {
+            map[RowFromID(i)][ColFromID(i)].PieceOnTile = null;
+            map[RowFromID(i)][ColFromID(i)].Passable = true;
+            for (int j = 0; j < 4; j++)
+                if (KnightLocations[j] == i)
+                    KnightLocations[j] = -1;
         }
 
         public bool PlayerHasMoveAvailable(Piece.Type Type)
@@ -255,7 +398,100 @@ namespace Pillage
         private int TileRight(int id) { return (id % 10 == 7) ? -1 : id + 1; }
 
 
+        #region AI Move Calculators
 
+        public int[] CalculateAIKnightMove()
+        {
+                                    //Move From, Move to, Attack
+            int[] output = new int[] { -1, -1, -1 };
+            bool[] tested = new bool[] { false, false, false, false };
+            Random r = new Random();
+
+            int i = r.Next(3);
+
+            while (tested.Contains<bool>(false))
+            {
+                if (!tested[i])
+                    if (KnightLocations[i] != -1)
+                    {
+                        int[] posMoves = map[RowFromID(i)][ColFromID(i)].PieceOnTile.GetValidMoves();
+                        posMoves = RemoveFromArray(posMoves, -1);
+                        if (posMoves.Length > 0)
+                        {
+                            output[0] = KnightLocations[i];
+                            output[1] = posMoves[r.Next(posMoves.Length)];
+                            int[] posAttacks = map[RowFromID(i)][ColFromID(i)].PieceOnTile.GetValidAttacks(output[1]);
+                            posAttacks = RemoveFromArray(posAttacks, -1);
+                            if (posAttacks.Length > 0)
+                                output[2] = posAttacks[r.Next(posAttacks.Length)];
+
+                            return output;
+                        }
+                    }
+            }
+
+            return output;
+        }
+        /* Smart move technology for the knight. NOT YET IMPLIMENTED
+        private bool CalculateTileSafetyForKnight(int tileID)
+        {
+            bool output = false;
+
+            int[][] alg = new int[][] { new int[] { -1, 10000, -1 }, new int[] { -1, 10000, -1 }, new int[] { -1, 100000, -1 }, new int[] { -1, 10000, -1 } };
+
+            alg[0][0] = TileAbove(tileID);
+            alg[1][0] = TileBelow(tileID);
+            alg[2][0] = TileRight(tileID);
+            alg[3][0] = TileLeft(tileID);
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (alg[i][0] == -1)
+                    alg[i][1] = 0;
+
+                //If the tile does exist but is already flagged as impassible
+                if (!map[RowFromID(i)][ColFromID(i)].Passable)
+                    alg[i][1] = 0;
+            }
+
+            foreach (int i in PeasantLocations)
+                if (i != -1)
+                {
+                    
+
+                    int[][] distMatrix = new int[4][];
+
+                    //Populate the distance matrix. 
+                    for (int j = 0; i < 4; j++)
+                    {
+                        distMatrix[j][] = new int[2];
+                        distMatrix[j][0] = alg[j][0];
+                        distMatrix[j][1] = (distMatrix[j][0] != -1) ? Distance(i, distMatrix[j][0]) : 1000;
+                    }
+
+
+                }
+            
+            return output;
+        }
+
+        private int Distance(int tileA, int tileB)
+        {
+            int i = 0;
+            int rowA, colA, rowB, colB;
+            rowA = RowFromID(tileA);
+            rowB = RowFromID(tileB);
+            colA = ColFromID(tileA);
+            colB = ColFromID(tileB);
+
+            i += Math.Abs(rowA - rowB);
+            i += Math.Abs(colA - colB);            
+
+            return i;
+        }
+        */
+
+        #endregion
     }
 
 
@@ -264,6 +500,7 @@ namespace Pillage
         private int id = -1;
         private Piece piece = null;
         private bool passable = true;
+        private bool hasStone = false;
 
         public Tile()
         {
@@ -287,6 +524,12 @@ namespace Pillage
             {
                 return id;
             }
+        }
+
+        public void SetStone()
+        {
+            hasStone = true;
+            passable = false;
         }
 
         public Piece PieceOnTile

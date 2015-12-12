@@ -13,6 +13,9 @@
 
         public abstract int[] GetValidAttacks();
 
+        public abstract int[] GetValidAttacks(int tileID);
+
+
         public bool IsAlive
         {
             get

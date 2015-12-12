@@ -49,5 +49,34 @@
 
             return;
         }
+
+        public void AttackLocation(int tileID)
+        {
+            map.KnightAttack(tileID);
+        }
+
+        public int[] DoKnightMoveAI()
+        {
+            int[] output = map.CalculateAIKnightMove();
+
+            if(output[0] != -1)
+            {
+                map.MoveKnight(output[0], output[1]);
+                if (output[2] != -1)
+                    map.KnightAttack(output[2]);
+            }
+
+            return output;
+        }
+
+        public bool BoardCleanup()
+        {
+            return map.UpdateGameState();
+        }
+
+        public void ResetGame()
+        {
+            map = new Map();
+        }
     }
 }

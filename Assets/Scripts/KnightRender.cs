@@ -16,16 +16,17 @@ public class KnightRender : MonoBehaviour
     public void MoveTo(int tileID)
     {
         Move(Board.ColFromID(tileID), Board.RowFromID(tileID));
+        this.tileID = tileID;
+    }
+
+    public void Move(int x, int y)
+    {
+        knightTransform.position = new Vector2(y, -x) + Board.boardPosition;
     }
 
     void Start()
     {
         knightTransform = transform; //saves the GetComponent<>() call.
-    }
-
-    public void Move(int x, int y)
-    {
-        knightTransform.position = Board.GridToScreenPoints(x, y);
     }
 
 

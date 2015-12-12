@@ -15,8 +15,9 @@ public class Board : MonoBehaviour {
     public GameObject KnightPrefab;
     public GameObject PeasantPrefab;
     public int boardSize = 8;
+    public int numOfKnightMoves;
     Tile[,] map; //ON THE map, the x = column, y = row. Top row = row 7. 
-    private static Vector2 boardPosition;
+    public static Vector2 boardPosition;
 
 	// create the board.
 	void Start ()
@@ -114,6 +115,39 @@ public class Board : MonoBehaviour {
         }
     }
 
+    public void ClearAllKnights()
+    {
+        foreach (KnightRender knight in KnightList)
+        {
+            DeletePiece(knight.gameObject, knight.tileID);
+        }
+    }
+
+    public void DrawKnights(int[] tileLocations)
+    {
+        foreach (int i in tileLocations)
+        {
+            int row = RowFromID(i);
+            int col = ColFromID(i);
+
+            drawKnight(col, row);
+        }
+    }
+
+    public void drawKnight(int tileX, int tileY)
+    {
+        // creates a new knight on the board and returns the knight just created.
+        GameObject newKnight = Instantiate(KnightPrefab, new Vector2(tileX + boardHolder.position.x, tileY + boardHolder.position.y), Quaternion.identity) as GameObject;
+        KnightRender knight = newKnight.GetComponent<KnightRender>();
+        knight.gridPosition = new Vector2Int(tileX, tileY);
+        knight.tileID = map[tileX, -tileY].Id;
+        newKnight.transform.SetParent(knightHolder); //makes the knights a child of the empty knight game object.
+
+
+        map[tileX, -tileY].setKnight(true);
+        map[tileX, -tileY].ColliderSwitch(false);
+    }
+
     public void DeletePiece(int tileX, int tileY, GameObject piece, GameState piecePhase)
     {
         switch (piecePhase)
@@ -164,6 +198,33 @@ public class Board : MonoBehaviour {
 
     }
 
+
+
+    public void DeletePiece(GameObject piece, int tileID)
+    {
+        int row = RowFromID(tileID);
+        int col = ColFromID(tileID);
+        if (row == -1 || col == -1)
+            return;
+
+        Destroy(piece);
+
+        if (piece.tag == "Knight")
+        {
+            --KnightCount;
+            KnightList.Remove(piece.GetComponent<KnightRender>());
+            map[row, col].setKnight(false);
+            map[row, col].ColliderSwitch(true);
+        }
+        else if (piece.tag == "Peasant")
+        {
+            --PeasantCount;
+            PeasantList.Remove(piece.GetComponent<PeasantRender>());
+            map[row, col].setPeasant(false);
+            map[row, col].ColliderSwitch(true);
+        }
+    }
+
     private void KillKnight(int tileX, int tileY, GameObject piece)
     {
         Destroy(piece);
@@ -192,7 +253,29 @@ public class Board : MonoBehaviour {
         PeasantList = new List<PeasantRender>(peasants);
     }
 
-    
+    public void moveKnight(KnightRender knight, int newTileID)
+    {
+        int oldcol = ColFromID(knight.tileID);
+        int oldrow = RowFromID(knight.tileID);
+        int dCol = ColFromID(newTileID);
+        int dRow = RowFromID(newTileID);
+
+        map[oldrow, oldcol].ColliderSwitch(true);
+        knight.MoveTo(newTileID);
+        map[dRow, dCol].ColliderSwitch(false);
+    }
+
+    public void movePeasant(PeasantRender knight, int newTileID)
+    {
+        int oldcol = ColFromID(knight.tileID);
+        int oldrow = RowFromID(knight.tileID);
+        int dCol = ColFromID(newTileID);
+        int dRow = RowFromID(newTileID);
+
+        map[oldrow, oldcol].ColliderSwitch(true);
+        knight.MoveTo(newTileID);
+        map[dRow, dCol].ColliderSwitch(false);
+    }
 
     public static Vector2 GridToScreenPoints(int gridX, int gridY)
     {
@@ -230,7 +313,20 @@ public class Board : MonoBehaviour {
         int col = ColFromID(tileID);
         int row = RowFromID(tileID);
 
-        map[row, col].Highlight(HighlightType.Attack);
+        if (row == -1 || col == -1)
+            return;
+
+        map[row, col].Highlight(HighlightType.Move);
+    }
+
+    public void HighlightTile(int tileID, HighlightType highlightType)
+    {
+        int col = ColFromID(tileID);
+        int row = RowFromID(tileID);
+        if (row == -1 || col == -1)
+            return;
+
+        map[row, col].Highlight(highlightType);
     }
 
     public void HighlightTiles(int[] tileIDs)
@@ -241,10 +337,21 @@ public class Board : MonoBehaviour {
         }
     }
 
+    public void HighlightTiles(int[] tileIDs, HighlightType highlightType)
+    {
+        foreach (int i in tileIDs)
+        {
+            HighlightTile(i, highlightType);
+        }
+    }
+
     public void UnhighlightTile(int tileID)
     {
         int col = ColFromID(tileID);
         int row = RowFromID(tileID);
+
+        if (row == -1 || col == -1)
+            return;
 
         map[row, col].Unhighlight();
     }
@@ -253,6 +360,14 @@ public class Board : MonoBehaviour {
     {
         foreach (int i in tileIDs)
             UnhighlightTile(i);
+    }
+
+    public bool isTileHighlighted(int tileID)
+    {
+        int col = ColFromID(tileID);
+        int row = RowFromID(tileID);
+
+        return map[row, col].isHighlighted;
     }
 
     // Update is called once per frame

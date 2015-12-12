@@ -25,6 +25,11 @@
             return new int[] {-1};
         }
 
+        public override int[] GetValidAttacks(int tileID)
+        {
+            return new int[] { -1 };
+        }
+
         public override int[] GetValidMoves()
         {
             int[] output = new int[4];
