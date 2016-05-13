@@ -1,2 +1,2 @@
-# Semester_Project
-Knights and Peasants Game
+# Semester Project
+Knights and Peasants Game. Written in C# and Unity.
